@@ -1,0 +1,82 @@
+[
+  {
+    "id": 1,
+    "location": {
+      "latitude": 49.474932,
+      "longitude": 8.534611
+    },
+    "publicParty": true,
+    "title": "Marks Party",
+    "organizer": {
+      "name": "Mark Ferrari",
+      "imgUrl": "user_5"
+    },
+    "imgUrl": "party_1",
+    "guestImgs": [ "user_1", "user_2", "user_3", "user_4"],
+    "guestCount": 55
+  },
+  {
+    "id": 2,
+    "location": {
+      "latitude": 49.474240,
+      "longitude": 8.533729
+    },
+    "publicParty": false,
+    "title": "Bargus Grillparty",
+    "organizer": {
+      "name": "Bargu Soner",
+      "imgUrl": "user_4"
+    },
+    "imgUrl": "party_2",
+    "guestImgs": [ "user_1", "user_2", "user_3", "user_5"],
+    "guestCount": 12
+  },
+  {
+    "id": 3,
+    "location": {
+      "latitude": 49.475020,
+      "longitude": 8.531740
+    },
+    "publicParty": true,
+    "title": "Party bei mir zuhause",
+    "organizer": {
+      "name": "Kevin Kevin",
+      "imgUrl": "user_2"
+    },
+    "imgUrl": "party_3",
+    "guestImgs": [ "user_1", "user_3"],
+    "guestCount": 2
+  },
+  {
+    "id": 4,
+    "location": {
+      "latitude": 49.493170,
+      "longitude": 8.468990
+    },
+    "publicParty": false,
+    "title": "Roberts Hausfete",
+    "organizer": {
+      "name": "Robert Stahl",
+      "imgUrl": "user_1"
+    },
+    "imgUrl": "party_4",
+    "guestImgs": [],
+    "guestCount": 0
+  },
+  {
+    "id": 5,
+    "location": {
+      "latitude": 49.493030,
+      "longitude": 8.468070
+    },
+    "publicParty": true,
+    "title": "Dirks Party",
+    "organizer": {
+      "name": "Dirk Dickel",
+      "imgUrl": "user_3"
+    },
+    "imgUrl": "party_5",
+    "guestImgs": [ "user_1", "user_2", "user_4", "user_5"],
+    "guestCount": 6
+  }
+]

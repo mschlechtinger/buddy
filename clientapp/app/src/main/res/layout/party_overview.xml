@@ -1,0 +1,131 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable
+            name="party"
+            type="com.example.d062589.partylive.Models.Party"/>
+    </data>
+
+    <LinearLayout
+    android:id="@+id/layout_bottom_sheet_upper_box"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <ImageView
+        android:id="@+id/party_preview_image"
+
+        android:scaleType="centerCrop"
+        android:adjustViewBounds="true"
+
+        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_weight="0.25"
+
+        android:src="@{party.imgUrl}"
+        android:contentDescription="@null" />
+
+
+    <!-- bottom sheet upper box main information -->
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="0dp"
+        android:layout_weight="0.5"
+        android:layout_height="match_parent"
+        android:padding="@dimen/margin_normal">
+
+        <!-- Title -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.35"
+
+            android:text="@{party.title}"
+            android:textSize="@dimen/text_size_big"
+            android:textColor="@color/colorText"
+
+            android:scrollHorizontally="true"
+            android:ellipsize="end"
+            android:maxLines="1"/>
+
+
+        <!-- Organizer -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.3"
+            android:layout_marginBottom="@dimen/margin_small">
+
+            <TextView
+                android:id="@+id/organizerName"
+
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+
+                android:gravity="center"
+
+                android:text="@{`by ` + party.organizer.name}"
+
+                android:textSize="@dimen/text_size_supertiny"
+                android:fontFamily="sans-serif-light"
+                android:textColor="@color/colorText"/>
+
+            <android.support.v7.widget.CardView
+
+                android:layout_height="25dp"
+                android:layout_width="25dp"
+                android:elevation="10dp"
+
+                android:layout_marginStart="@dimen/margin_small"
+
+                app:cardCornerRadius="12.5dp"
+                android:innerRadius="0dp"
+                android:shape="ring"
+                android:thicknessRatio="1.9"
+
+                android:layout_toEndOf="@+id/organizerName">
+                <ImageView
+                    android:layout_height="match_parent"
+                    android:layout_width="match_parent"
+
+                    android:src="@{party.organizer.imgUrl}"
+
+                    android:scaleType="centerCrop"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:contentDescription="@null" >
+
+                </ImageView>
+            </android.support.v7.widget.CardView>
+
+        </RelativeLayout>
+
+
+        <!-- Guest list preview -->
+        <RelativeLayout
+            android:id="@+id/guests_overview"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.35"
+            android:gravity="bottom">
+
+        </RelativeLayout>
+
+
+    </LinearLayout>
+
+    <!-- Bottom Sheet upper box right information -->
+    <TextView
+        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_weight="0.2"
+
+        android:text="Distance to Party"
+        android:textColor="@color/colorText"
+
+        android:gravity="bottom"
+        android:padding="@dimen/margin_normal"/>
+
+    </LinearLayout>
+</layout>
