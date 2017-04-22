@@ -1,0 +1,45 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable
+            name="party"
+            type="com.example.d062589.partylive.Models.Party"/>
+    </data>
+
+    <LinearLayout
+        android:id="@+id/layout_bottom_sheet"
+
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:orientation="vertical"
+
+        app:behavior_peekHeight="100dp"
+        app:behavior_hideable="true"
+
+        app:layout_behavior="@string/string_bottom_sheet_behavior"
+        android:background="@color/color_bottom_sheet"
+
+        android:elevation="@dimen/z_bottom_sheet">
+
+
+        <!-- bottom sheet upper box -->
+        <include
+            layout="@layout/party_overview"
+            bind:party="@{party}"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.25"/>
+
+
+        <!-- bottom sheet lower box -->
+        <include
+            layout="@layout/party_details"
+            bind:party="@{party}"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.75"
+            />
+
+    </LinearLayout>
+</layout>
