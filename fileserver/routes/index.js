@@ -43,7 +43,8 @@ router.post('/files', function(req, res) {
   fileData.mv(__dirname + '/../files/' + fileId + path.extname(req.files.fileData.name), function(err) {
     if (err)
       return res.status(500).send(err.message);
- 
+    
+    console.log('Uploaded: ' + req.files.fileData.name + " as " + fileId + path.extname(req.files.fileData.name));
     res.status(200).json({status: 'File uploaded!', fileUrl: config.publicServiceAddress + '/files/' + fileId + path.extname(req.files.fileData.name)});
   });
 });
