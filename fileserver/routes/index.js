@@ -2,12 +2,13 @@
 
 const express = require('express');
 const router = express.Router();
-
+const path = require('path');
 const uuidV4 = require('uuid/v4');
+const config = require('../config.js');
 
 
 //handle requests for path myserver/files
-router.get('/images/:fileId', function(req,res,next){
+router.get('/files/:fileId', function(req,res,next){
 
 	var options = {
 	    root: __dirname + '/../files/',
@@ -18,11 +19,11 @@ router.get('/images/:fileId', function(req,res,next){
 	    }
 	};
 
-	var fileName = req.params.fileId + ".jpg";
+	var fileName = req.params.fileId;
 
   res.sendFile(fileName, options, function (err) {
     if (err) {
-      next(err);
+      next(err.message);
     } else {
       console.log('Sent:', fileName);
     }
@@ -30,7 +31,7 @@ router.get('/images/:fileId', function(req,res,next){
 
 });
 
-router.post('/images', function(req, res) {
+router.post('/files', function(req, res) {
 
   if (!req.files)
     return res.status(400).send('No files were uploaded.');
@@ -39,11 +40,11 @@ router.post('/images', function(req, res) {
 
  let fileData = req.files.fileData;
 
-  fileData.mv(__dirname + '/../files/' + fileId + '.jpg', function(err) {
+  fileData.mv(__dirname + '/../files/' + fileId + path.extname(req.files.fileData.name), function(err) {
     if (err)
-      return res.status(500).send(err);
+      return res.status(500).send(err.message);
  
-    res.status(200).json({status: 'File uploaded!', id: fileId});
+    res.status(200).json({status: 'File uploaded!', fileUrl: config.publicServiceAddress + '/files/' + fileId + path.extname(req.files.fileData.name)});
   });
 });
 module.exports = router;
