@@ -33,7 +33,7 @@ router.post('/', function(req, res) {
 
 router.put('/:personId', function(req,res){
 
-	var person = people.filter(function(person){return req.params.personId.toString() === person.id;});
+	var person = people.filter(function(person){return req.params.personId.toString() === person.id;})[0];
 
 	if(!person) return res.status(404).json({error:"Person not found."});
 
