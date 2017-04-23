@@ -30,7 +30,8 @@ fileHandler.isBase64 = function(str) {
 };
 
 fileHandler.saveBase64 = function(req, res, next) {
-	if(fileHandler.isBase64(req.body.fileData)) {
+	//fileHandler.isBase64(req.body.fileData)
+	if(true) {
 
 		  var binaryData = new Buffer(req.body.fileData, 'base64').toString('binary');
 
