@@ -1,19 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:bind="http://schemas.android.com/apk/res-auto"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
         <variable
-            name="party"
-            type="com.example.d062589.partylive.Models.Party"/>
+            name="drop"
+            type="com.example.d062589.buddy.Models.Drop"/>
     </data>
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:textColor="@color/colorText"
-        tools:context="com.example.d062589.partylive.Activities.MainActivity">
+        tools:context="com.example.d062589.buddy.Activities.MainActivity">
 
 
         <!-- main content layout-->
@@ -23,35 +21,95 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:textColor="@color/colorText"
-            tools:context="com.example.d062589.partylive.Activities.MainActivity" />
+            tools:context="com.example.d062589.buddy.Activities.MainActivity" />
 
 
+        <!--Fullscreen Image-->
+        <RelativeLayout
+            android:id="@+id/fullscreen_image_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/transparentBlack"
+            android:visibility="invisible"
+            android:onClick="hideImg">
 
-        <!-- bottom sheet -->
-        <include
-            layout="@layout/party_sheet"
-            bind:party="@{party}"/>
+            <ImageView
+                android:id="@+id/fullscreen_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scaleType="fitCenter"
+                android:layout_centerInParent="true"
+                android:adjustViewBounds="true"/>
+
+        </RelativeLayout>
 
 
+        <RelativeLayout
+            android:id="@+id/fullscreen_video_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/transparentBlack"
+            android:visibility="invisible"
+            android:onClick="hideVideo">
+            <VideoView
+                android:id="@+id/video_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"/>
+        </RelativeLayout>
 
-        <!-- Main FAB (Create a Party) -->
+
+        <!--FAB-->
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab"
-            android:onClick="addParty"
-
+            android:id="@+id/fab3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin_big"
-
-            app:layout_anchor="@+id/layout_bottom_sheet_upper_box"
-            app:layout_anchorGravity="top|end"
-
-            android:elevation="@dimen/z_above_bottom_sheet"
-
-            android:tint="@color/colorText"
-            app:rippleColor="@color/colorBackground"
-            android:src="@drawable/plus" />
-
+            android:layout_marginBottom="230dp"
+            android:layout_gravity="bottom|end"
+            android:layout_marginRight="@dimen/margin_normal"
+            android:visibility="invisible"
+            app:backgroundTint="@color/colorQuaternary"
+            app:elevation="6dp"
+            app:pressedTranslationZ="12dp"
+            android:src="@drawable/sound"
+            android:onClick="openSoundRecorder"/>
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="160dp"
+            android:layout_gravity="bottom|end"
+            android:layout_marginRight="@dimen/margin_normal"
+            android:visibility="invisible"
+            app:backgroundTint="@color/colorTertiary"
+            app:elevation="6dp"
+            app:pressedTranslationZ="12dp"
+            android:src="@drawable/video"
+            android:onClick="openVideoCamera"/>
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="90dp"
+            android:layout_gravity="bottom|end"
+            android:layout_marginRight="@dimen/margin_normal"
+            android:visibility="invisible"
+            app:elevation="6dp"
+            app:backgroundTint="@color/colorSecondary"
+            app:pressedTranslationZ="12dp"
+            android:src="@drawable/camera"
+            android:onClick="openPhotoCamera"/>
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            app:elevation="6dp"
+            app:backgroundTint="@color/colorAccent"
+            app:pressedTranslationZ="12dp"
+            android:layout_margin="@dimen/margin_normal"
+            android:src="@drawable/plus"
+            android:onClick="animateFAB"/>
 
     </android.support.design.widget.CoordinatorLayout>
 
