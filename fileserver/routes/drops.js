@@ -36,8 +36,11 @@ router.post('/', function(req, res) {
   if(!req.body.comment){
       message += 'No comment was specified.';
   }
-  if(!req.body.location){
-      valid = false; message += 'No location was specified.';
+  if(!req.body.latitude){
+      valid = false; message += 'No latitude was specified.';
+  }
+  if(!req.body.longitude){
+      valid = false; message += 'No longitude was specified.';
   }
   if(!req.body.hideable){
       message += 'No hideable was specified.';
@@ -62,10 +65,12 @@ if(!valid){
         dropType: req.body.dropType,
         comment: req.body.comment,
         previewImg: undefined,
-        location: req.body.location,
+        latitude: req.body.latitude,
+        longitude: req.body.longitude,
         hideable: req.body.hideable || false,
         id: uuidV4(),
-        expirationDate: req.body.expirationDate || new Date()
+        expirationDate: req.body.expirationDate || new Date(),
+        contentSize: undefined
       };
       drops.push(drop);
     res.status(200).json({status: 'Drop created!', id: drop.id, drop: drop});
