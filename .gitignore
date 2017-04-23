@@ -101,6 +101,19 @@ codeserver/node_modules
 #config
 codeserver/config.js
 
+### File Server ###
+
+#npm degub log
+fileserver/npm-debug.log
+
+#node modules
+fileserver/node_modules
+
+#config
+fileserver/config.js
+
+#files
+fileserver/files
 ### Client App ###
 
 .idea/
@@ -113,3 +126,4 @@ codeserver/config.js
 /build
 /captures
 .externalNativeBuild
+~$Service Definition.pptx
