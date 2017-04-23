@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 import Alamofire
+import CoreLocation
 
 
 let apiUrl = "http://buddy.theapi.cloud"
@@ -21,7 +22,13 @@ public struct Api {
         let urlSession = URLSession.shared
         
         let task = urlSession.dataTask(with: url) { (data, response, error) in
-            let jsonData = try! JSONSerialization.jsonObject(with: data!, options: [])
+            let jsonData: Any
+            do {
+              jsonData = try JSONSerialization.jsonObject(with: data!, options: [])
+            } catch {
+                print("JSON STUFF FAILED :/")
+                return
+            }
             let dropsArray = jsonData as! [[String:AnyObject]]
             var drops = [Drop]()
             for drop in dropsArray {
@@ -55,7 +62,10 @@ public struct Api {
     }
     
     
-    public static func createDropWithImage(image: UIImage, comment: String, isHideable: Bool) {
+    public static func createDropWithImage(image: UIImage, comment: String, isHideable: Bool, lastLocation: CLLocationCoordinate2D) {
+        let lat = String(lastLocation.latitude)
+        let lon = String(lastLocation.longitude)
+        
         let headers: HTTPHeaders = [String:String]()
         let URL = try! URLRequest(url: apiUrl + "/buddy/drops", method: .post, headers: headers)
         
@@ -68,8 +78,8 @@ public struct Api {
             multipartFormData.append("http://media.steampowered.com/steamcommunity/public/images/avatars/64/64e8917b85a0f5e20565651119c60f3d8d363898_full.jpg".data(using: String.Encoding.utf8)!, withName: "authorImgUrl")
             multipartFormData.append("Image".data(using: String.Encoding.utf8)!, withName: "dropType")
             multipartFormData.append(comment.data(using: String.Encoding.utf8)!, withName: "comment")
-            multipartFormData.append("49.4755346".data(using: String.Encoding.utf8)!, withName: "latitude")
-            multipartFormData.append("8.534418".data(using: String.Encoding.utf8)!, withName: "longitude")
+            multipartFormData.append(lat.data(using: String.Encoding.utf8)!, withName: "latitude")
+            multipartFormData.append(lon.data(using: String.Encoding.utf8)!, withName: "longitude")
             if isHideable {
                 multipartFormData.append("true".data(using: String.Encoding.utf8)!, withName: "longitude")
             } else {

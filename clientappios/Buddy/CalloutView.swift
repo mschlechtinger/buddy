@@ -34,7 +34,7 @@ class CalloutView: UIView, MGLCalloutView {
         
         mainBody.backgroundColor = .darkGray
         mainBody.tintColor = .white
-        mainBody.contentEdgeInsets = UIEdgeInsets(top: 10.0, left: 10.0, bottom: 10.0, right: 10.0)
+        mainBody.contentEdgeInsets = UIEdgeInsets(top: 100.0, left: 10.0, bottom: 10.0, right: 10.0)
         mainBody.layer.cornerRadius = 4.0
         
         addSubview(mainBody)

@@ -9,9 +9,14 @@
 import UIKit
 import Mapbox
 
-class MapViewController: UIViewController, MGLMapViewDelegate, UIGestureRecognizerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+class MapViewController: UIViewController, MGLMapViewDelegate, UIGestureRecognizerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, CLLocationManagerDelegate {
     
     @IBOutlet var mapView: MGLMapView!
+    
+    let locationManager = CLLocationManager()
+    var lastLoc: CLLocationCoordinate2D?
+    
+    var timer: Timer?
     
     var selectedDrop: Drop?
     
@@ -19,6 +24,17 @@ class MapViewController: UIViewController, MGLMapViewDelegate, UIGestureRecogniz
     
     override func viewDidLoad() {
         super.viewDidLoad()
+  
+        // For use in foreground
+        self.locationManager.requestWhenInUseAuthorization()
+        
+        if CLLocationManager.locationServicesEnabled() {
+            locationManager.delegate = self
+            locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
+            locationManager.startUpdatingLocation()
+        }
+        
+        
         // some caching for pictures
         let memoryCapacity = 500 * MB
         let diskCapacity = 500 * MB
@@ -29,16 +45,7 @@ class MapViewController: UIViewController, MGLMapViewDelegate, UIGestureRecogniz
         //mapView.attributionButton.isHidden = true
         mapView.delegate = self
         
-        
-        // Drops stuff
-        /*
-         let drops = Drop.fetchDrops()
-         for drop in drops {
-         let location = CLLocationCoordinate2DMake(drop.latitude, drop.longitude)
-         let annotation = DropPointAnnotation(coordinate: location, title: drop.title, subtitle: nil, drop: drop)
-         mapView.addAnnotation(annotation)
-         }
-         */
+        self.timer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(MapViewController.fetchAndDisplay), userInfo: nil, repeats: true)
         fetchAndDisplay()
     }
     
@@ -167,13 +174,25 @@ class MapViewController: UIViewController, MGLMapViewDelegate, UIGestureRecogniz
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         let chosenImage = info[UIImagePickerControllerOriginalImage] as! UIImage
-        Api.createDropWithImage(image: chosenImage, comment: "TEST123", isHideable: false)
+        Api.createDropWithImage(image: chosenImage, comment: "TEST123", isHideable: false, lastLocation: lastLoc!)
         // use the image
         dismiss(animated: true, completion: nil)
     }
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         dismiss(animated: true, completion: nil)
+    }
+    
+    // MARK: - Location Manager
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        if lastLoc == nil {
+            if let loc = manager.location?.coordinate {
+                mapView.setCenter(loc, animated: true)
+
+            }
+        }
+        lastLoc = manager.location?.coordinate ?? nil
+        
     }
     
     
