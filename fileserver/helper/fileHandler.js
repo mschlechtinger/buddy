@@ -24,6 +24,36 @@ fileHandler.uploadFile = function(req, res, next){
 	});
 };
 
+fileHandler.isBase64 = function(str) {
+	var base64regex = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
+	return base64regex.test(str);
+};
+
+fileHandler.saveBase64 = function(req, res, next) {
+	if(fileHandler.isBase64(req.body.fileData)) {
+
+		  var binaryData = new Buffer(req.body.fileData, 'base64').toString('binary');
+
+			let fileName = uuidV4();
+
+			require("fs").writeFile(__dirname + '../files/' + fileName + '.jpg', binaryData, "binary", function(err) {
+
+			 	//Handle errors
+			    if (err){
+			 	  console.log(err); // writes out file without error, but it's not a valid image
+			      return res.status(500).send(err.message);
+			    }
+
+				req.fileName = fileName;
+			    req.fileExt = ".jpg";
+			    req.fileUrl = config.publicServiceAddress + '/files/' + fileName + ".jpg";
+			    next();
+			});
+		} else{
+			next();
+		}
+};
+
 fileHandler.makeThumbnail = function(req, res, next) {
 	if(req.fileExt && [".jpg",".png",".jpeg"].includes(req.fileExt)){
 
