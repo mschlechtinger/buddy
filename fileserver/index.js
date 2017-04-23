@@ -8,8 +8,10 @@ const fileUpload = require('express-fileupload');
 
 const app = express();
 
-app.use(bodyParser.json());
-app.use(fileUpload());
+app.use(bodyParser.json({'limit':'100000kb'}));
+app.use(fileUpload({
+  limits: { fileSize: 50 * 1024 * 1024 },
+}));
 app.use(routes);
 
 app.listen(config.servicePort, function(){

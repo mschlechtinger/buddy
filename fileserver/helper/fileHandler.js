@@ -36,7 +36,7 @@ fileHandler.saveBase64 = function(req, res, next) {
 
 			let fileName = uuidV4();
 
-			require("fs").writeFile(__dirname + '../files/' + fileName + '.jpg', binaryData, "binary", function(err) {
+			require("fs").writeFile(__dirname + '/../files/' + fileName + '.jpg', binaryData, "binary", function(err) {
 
 			 	//Handle errors
 			    if (err){
