@@ -44,4 +44,8 @@ router.put('/:personId', function(req,res){
 	people[personIndex].date = new Date();
 	res.status(204).send();
 });
+router.delete('/:personId', function(req,res){
+	people = people.filter(function(person){ return req.params.personId !== person.id;} );
+	res.status(204).send();
+});
 module.exports = router;
