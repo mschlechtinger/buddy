@@ -245,3 +245,16 @@ class MapViewController: UIViewController, MGLMapViewDelegate, UIGestureRecogniz
     
 }
 
+extension UIImagePickerController {
+    open override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        self.navigationBar.barTintColor = UIColor(colorLiteralRed: 50/255, green: 23/255, blue: 76/255, alpha: 1)
+        self.navigationBar.topItem?.rightBarButtonItem?.tintColor = UIColor.white
+        self.navigationBar.topItem?.rightBarButtonItem?.isEnabled = true
+        self.navigationBar.titleTextAttributes = [
+            NSForegroundColorAttributeName : UIColor.white
+        ]
+
+    }
+}
+
