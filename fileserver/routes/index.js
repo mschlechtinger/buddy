@@ -6,7 +6,8 @@ const path = require('path');
 const uuidV4 = require('uuid/v4');
 const config = require('../config.js');
 
-
+//distribute requests to /drops
+router.use('/drops', require('./drops'));
 //handle requests for path myserver/files
 router.get('/files/:fileId', function(req,res,next){
 
