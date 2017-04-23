@@ -62,6 +62,9 @@ class MapViewController: UIViewController, MGLMapViewDelegate, UIGestureRecogniz
     func fetchAndDisplay() {
         Api.fetchDrops { (drops) in
             print("GOT \(drops.count) drops")
+            if let annotationsOnMap = self.mapView.annotations {
+                self.mapView.removeAnnotations(annotationsOnMap)
+            }
             for drop in drops {
                 let location = CLLocationCoordinate2DMake(drop.latitude, drop.longitude)
                 let annotation = DropPointAnnotation(coordinate: location, title: drop.comment, subtitle: nil, drop: drop)
@@ -174,7 +177,7 @@ class MapViewController: UIViewController, MGLMapViewDelegate, UIGestureRecogniz
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         let chosenImage = info[UIImagePickerControllerOriginalImage] as! UIImage
-        Api.createDropWithImage(image: chosenImage, comment: "TEST123", isHideable: false, lastLocation: lastLoc!)
+        Api.createDropWithImage(image: chosenImage, comment: "Hello from iOS", isHideable: false, lastLocation: lastLoc!)
         // use the image
         dismiss(animated: true, completion: nil)
     }
