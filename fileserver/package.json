@@ -10,7 +10,8 @@
     "node-rsa": "^0.4.2",
     "node-thumbnail": "^0.9.1",
     "urlsafe-base64": "^1.0.0",
-    "uuid": "^3.0.1"
+    "uuid": "^3.0.1",
+    "video-thumb": "0.0.3"
   },
   "devDependencies": {},
   "scripts": {

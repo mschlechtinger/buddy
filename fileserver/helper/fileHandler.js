@@ -3,7 +3,8 @@ const config = require('../config');
 const uuidV4 = require('uuid/v4');
 const path = require('path');
 const thumb = require('node-thumbnail').thumb;
- 
+const thumbler = require('video-thumb');
+
 var fileHandler = {};
 
 fileHandler.uploadFile = function(req, res, next){
@@ -31,6 +32,7 @@ fileHandler.makeThumbnail = function(req, res, next) {
 		  source: __dirname + '/../files/' + req.fileName + req.fileExt, // could be a filename: dest/path/image.jpg 
 		  destination: __dirname + '/../files/',
 		  quiet: true,
+		  width: 250,
 		  concurrency: 1
 		}, function(err, stdout, stderr) {
 			if(err)  {
@@ -41,9 +43,20 @@ fileHandler.makeThumbnail = function(req, res, next) {
 			next();
 		});
 	}else{
-	//carry on without thumbnail Q.Q
-	console.log("no thumbnail created for filetype " + req.fileExt);
-	next();
+		if(req.fileExt && [".mp4"].includes(req.fileExt)){
+
+
+			thumbler.extract(__dirname + '/../files/' + req.fileName + req.fileExt, __dirname + '/../files/' + req.fileName + '_thumb.png', '00:00:01', '250x250', function(){
+				
+				req.thumbNailUrl = config.publicServiceAddress + '/files/' + req.fileName + '_thumb.png';
+				next();
+			});
+
+		}else{
+			//carry on without thumbnail Q.Q
+			console.log("no thumbnail created for filetype " + req.fileExt);
+			next();
+		}
 	}
 };
 
