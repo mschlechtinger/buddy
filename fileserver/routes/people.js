@@ -19,7 +19,7 @@ router.post('/', function(req, res) {
     var person = {
         
         name: req.body.name,
-        imgUrl: req.body.authorImgUrl,
+        imgUrl: req.body.imgUrl,
         latitude: parseFloat(req.body.latitude),
         longitude: parseFloat(req.body.longitude),
         id: uuidV4(),
