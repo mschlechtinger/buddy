@@ -26,7 +26,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -49,7 +48,6 @@ import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.LocationSource;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -69,11 +67,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Scanner;
 
 
@@ -293,17 +287,22 @@ public class MainActivity extends AppCompatActivity
             newDrop.setAuthor(USERNAME);
             newDrop.setAuthorImgUrl(USERIMG);
             newDrop.setDropType("Image");
-            newDrop.setComment("yeahBoi");
+            newDrop.setComment("Wow Cool");
             newDrop.setLatitude(mLastKnownLocation.getLatitude());
             newDrop.setLongitude(mLastKnownLocation.getLongitude());
             newDrop.setHideable(false);
 
+
             Bitmap bm = BitmapFactory.decodeFile(mImageUri.getPath());
+
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             bm.compress(Bitmap.CompressFormat.JPEG, 100, baos); //bm is the bitmap object
-            String encodedImage = Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT);
+            byte[] b = baos.toByteArray();
+            String encodedImage = Base64.encodeToString(b, Base64.DEFAULT);
 
-            newDrop.setFileData(encodedImage);
+            String resizedImage = resizeBase64Image(encodedImage);
+
+            newDrop.setFileData(resizedImage);
 
             // FAB animation & Onclick stuff
             animateFAB(fab);
@@ -314,6 +313,7 @@ public class MainActivity extends AppCompatActivity
                     sendImg(v);
                 }
             });
+
 
             // Show the Image
             Picasso.with(context)
@@ -332,6 +332,31 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+
+    public String resizeBase64Image(String base64image){
+        int IMG_WIDTH = 960;
+        int IMG_HEIGHT = 540;
+
+        byte [] encodeByte=Base64.decode(base64image.getBytes(),Base64.DEFAULT);
+        BitmapFactory.Options options=new BitmapFactory.Options();
+        options.inPurgeable = true;
+        Bitmap image = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length,options);
+
+
+        if(image.getHeight() <= 400 && image.getWidth() <= 400){
+            return base64image;
+        }
+        image = Bitmap.createScaledBitmap(image, IMG_WIDTH, IMG_HEIGHT, false);
+
+        ByteArrayOutputStream baos=new  ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.PNG,100, baos);
+
+        byte [] b=baos.toByteArray();
+        System.gc();
+        return Base64.encodeToString(b, Base64.NO_WRAP);
+
+    }
+
     private void sendImg(View view) {
         try {
             final ProgressDialog progress = new ProgressDialog(this);
@@ -345,7 +370,7 @@ public class MainActivity extends AppCompatActivity
 
             JSONObject payload = new JSONObject(dropJson);
 
-            String path = "/buddy/drops";
+            String path = "/buddy/drops/base64";
 
             RestClient.getInstance().post(payload, path, new MyListener<JSONObject>() {
                 @Override
@@ -465,17 +490,33 @@ public class MainActivity extends AppCompatActivity
             String locId = sharedPref.getString("LOCATION_ID", null);
 
             if (!p.getId().equals(locId)) {
+
                 if (markerMap.get(p.getId()) != null) {
                     markerMap.get(p.getId()).remove();
                     Marker marker = mMap.addMarker(new MarkerOptions()
                             .position(dropLocation)
                             .title(p.getName()));
+
+                    if (p.getName().equals("Peter Ulbrich")) {
+                        int iconResource = R.drawable.peter_marker;
+                        marker.setIcon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons(iconResource,
+                                MARKER_WIDTH,
+                                MARKER_HEIGHT)));
+                    }
+
                     markerMap.put(p.getId(), marker);
                 } else {
                     Marker marker = mMap.addMarker(new MarkerOptions()
                             .position(dropLocation)
                             .title(p.getName()));
                     marker.setTag(p);
+
+                    if (p.getName().equals("Peter Ulbrich")) {
+                        int iconResource = R.drawable.peter_marker;
+                        marker.setIcon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons(iconResource,
+                                MARKER_WIDTH,
+                                MARKER_HEIGHT)));
+                    }
 
                     markerMap.put(p.getId(), marker);
                 }
