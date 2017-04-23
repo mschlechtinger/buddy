@@ -8,6 +8,8 @@ const config = require('../config.js');
 
 //distribute requests to /drops
 router.use('/drops', require('./drops'));
+//distribute requests to /people
+router.use('/people', require('./people'));
 //handle requests for path myserver/files
 router.get('/files/:fileId', function(req,res,next){
 

@@ -6,7 +6,7 @@ const uuidV4 = require('uuid/v4');
 
 var people = [];
 
-//handle requests for path myserver/drops
+//handle requests for path myserver/people
 router.get('/', function(req,res){
 
     //amazing
@@ -32,7 +32,7 @@ router.post('/', function(req, res) {
 });
 
 router.put('/:personId', function(req,res){
-	
+
 	var person = people.filter(function(person){return req.params.personId.toString() === person.id;});
 
 	if(!person) return res.status(404).json({error:"Person not found."});
