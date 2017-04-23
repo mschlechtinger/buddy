@@ -7,7 +7,7 @@
     "dropType": "Sound",
     "hideable": false,
     "contentUrl": "http://buddy.theapi.cloud/buddy/files/707afe4f-8790-465a-88eb-f6f50a2058a9.mp3",
-    "previewImg": "http://www.indianfunpic.com/wp-content/uploads/2016/12/Funny-photo-for-WhatsApp-Group-Admin.jpg",
+    "thumbNailUrl": "http://www.indianfunpic.com/wp-content/uploads/2016/12/Funny-photo-for-WhatsApp-Group-Admin.jpg",
     "author": "Mark Ferrari",
     "authorImgUrl": "http://www.indianfunpic.com/wp-content/uploads/2016/12/Funny-photo-for-WhatsApp-Group-Admin.jpg"
   },
@@ -19,7 +19,7 @@
     "dropType": "Image",
     "hideable": false,
     "contentUrl": "https://www.funnypica.com/wp-content/uploads/2016/01/Funny-African-1-570x507.jpg",
-    "previewImg": "https://www.funnypica.com/wp-content/uploads/2016/01/Funny-African-1-570x507.jpg",
+    "thumbNailUrl": "https://www.funnypica.com/wp-content/uploads/2016/01/Funny-African-1-570x507.jpg",
     "author": "Mark Ferrari",
     "authorImgUrl": "http://www.indianfunpic.com/wp-content/uploads/2016/12/Funny-photo-for-WhatsApp-Group-Admin.jpg"
   },
@@ -31,7 +31,7 @@
     "dropType": "Video",
     "hideable": false,
     "contentUrl": "http://podcast-ww.wdr.de/medp/fsk0/135/1355010/diesendungmitdermaus_2017-04-16_sachgeschichteeierschibbelnmitgebaerdensprache_daserste.mp4",
-    "previewImg": "http://www.indianfunpic.com/wp-content/uploads/2016/12/Funny-photo-for-WhatsApp-Group-Admin.jpg",
+    "thumbNailUrl": "http://www.indianfunpic.com/wp-content/uploads/2016/12/Funny-photo-for-WhatsApp-Group-Admin.jpg",
     "author": "Mark Ferrari",
     "authorImgUrl": "http://www.indianfunpic.com/wp-content/uploads/2016/12/Funny-photo-for-WhatsApp-Group-Admin.jpg"
   },
@@ -43,7 +43,7 @@
     "hideable": true,
     "dropType": "Image",
     "contentUrl": "",
-    "previewImg": "http://www.indianfunpic.com/wp-content/uploads/2016/12/Funny-photo-for-WhatsApp-Group-Admin.jpg",
+    "thumbNailUrl": "http://www.indianfunpic.com/wp-content/uploads/2016/12/Funny-photo-for-WhatsApp-Group-Admin.jpg",
     "author": "Mark Ferrari",
     "authorImgUrl": "http://www.indianfunpic.com/wp-content/uploads/2016/12/Funny-photo-for-WhatsApp-Group-Admin.jpg"
   },
@@ -55,7 +55,7 @@
     "hideable": false,
     "dropType": "Image",
     "contentUrl": "http://www.myhappybirthdaywishes.com/wp-content/uploads/2016/03/happy-birthday-dog-funny-memes.jpg",
-    "previewImg": "http://www.myhappybirthdaywishes.com/wp-content/uploads/2016/03/happy-birthday-dog-funny-memes.jpg",
+    "thumbNailUrl": "http://www.myhappybirthdaywishes.com/wp-content/uploads/2016/03/happy-birthday-dog-funny-memes.jpg",
     "author": "Dieter der Fag",
     "authorImgUrl": "https://steemit-production-imageproxy-thumbnail.s3.amazonaws.com/U5dsnTaLaX8Ncrj1hAUkwM3afJDzhWg_1680x8400?AWSAccessKeyId=ASIAJRKI67AXN4BJ7HTA&Expires=1492889736&Signature=%2FZI8AhfJRmyIEJW5GRLC6JlXbgQ%3D&x-amz-security-token=FQoDYXdzEKf%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaDHq2SZ1nNArxXL6apyK3A9jyGNu84PCTHN9NALpJJCu3DExQBTk7OC9u3NP59qpgm16rIl31WzGb%2FsmeJYlNF03FjIs6p48t1Qc8zGayB8a8gTcFFmzZqZ85mvkD9YJe1siBGUtXK%2B9gPF1k8jI7X5ycOayTF85G7vKmehQ0zFR6UFAUs5MvGArQ%2FKao0EMYCGmFGwLDNezCtl2UEfRgoN0zkaI4tClk32SHpaJqLzQ5%2FmtZoUstd78rHyMTxNNAYOjRQEwuLYq%2FVo1FbReOda1vRa2ZeQgls60xBZONQnEB7U6S0flL0fdfGWmVShOx3ApSgTwZAxWuOUMW2O7zi%2Bt4h09UwgWm3r2fHue7BCG7uAqMHETtka8M1woRg61Q%2BAVbVLVoJ7MkOp6KMFv7Te9e18GM195DRb6ET%2BnN9MRdcdYGFPixvQVnSeE%2FbwNYzVi5YGOiViFfsnE4ftTuRcp5rAaOJUDY4yzy%2BSm8SurUnvnQXtAzfiABA8rINlxYI7tIDbnUQ5B5qFnqNpnLvmvc3vQwa%2B5kts3fHxCrBpSCvxxGiTi6rL7GBh9NjDcHi6ajM1S9TiVv%2BMWlM7lHEAn0wdUZO5Uoj7vtxwU%3D"
   },
@@ -64,7 +64,7 @@
     "author": "robert",
     "authorImgUrl": "http://i1.kym-cdn.com/photos/images/original/000/937/841/37d.jpg",
     "dropType": "Image",
-    "previewImg": "http://www.myhappybirthdaywishes.com/wp-content/uploads/2016/03/happy-birthday-dog-funny-memes.jpg",
+    "thumbNailUrl": "http://www.myhappybirthdaywishes.com/wp-content/uploads/2016/03/happy-birthday-dog-funny-memes.jpg",
     "comment": "this is a comment",
     "latitude": "49.4742346",
     "longitude": "8.534818",

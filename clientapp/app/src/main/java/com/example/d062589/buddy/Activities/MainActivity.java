@@ -1,57 +1,55 @@
 package com.example.d062589.buddy.Activities;
 
 import android.app.Activity;
-import android.content.ContentResolver;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.location.Location;
-import android.media.ExifInterface;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.MediaController;
 import android.widget.RelativeLayout;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
 import com.example.d062589.buddy.Models.Drop;
+import com.example.d062589.buddy.Models.Person;
 import com.example.d062589.buddy.R;
 import com.example.d062589.buddy.Utils.MyListener;
 import com.example.d062589.buddy.Utils.RestClient;
 import com.example.d062589.buddy.databinding.ActivityMainBinding;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.LocationSource;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -60,25 +58,23 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
-
-import retrofit2.Call;
-import retrofit2.Response;
-import retrofit2.http.Multipart;
-import retrofit2.http.POST;
-import retrofit2.http.Part;
-
-import static com.bumptech.glide.load.resource.bitmap.TransformationUtils.rotateImage;
 
 
 /**
@@ -89,7 +85,13 @@ public class MainActivity extends AppCompatActivity
         implements OnMapReadyCallback,
             GoogleApiClient.ConnectionCallbacks,
             GoogleApiClient.OnConnectionFailedListener,
-            GoogleMap.OnMarkerClickListener {
+            GoogleMap.OnMarkerClickListener,
+            LocationListener{
+
+
+    private static final String USERNAME = "Tim Wagner";
+    private static final String USERICON = "http://68.media.tumblr.com/fa00d3331e98e06dc53e4857c5814af2/tumblr_mrse3yRbCv1qlcx6bo1_500.png";
+    private static final String USERIMG = "http://207.154.218.165/buddy/files/62d6447e-c826-41b8-ba91-c53b0a2dc123_thumb.jpg";
 
 
     //google maps variables
@@ -102,7 +104,7 @@ public class MainActivity extends AppCompatActivity
 
     // Default location & default zoom to use when location permission is not granted.
     private final LatLng mDefaultLocation = new LatLng(49.493060, 8.468930);
-    private static final int DEFAULT_ZOOM = 15;
+    private static final int DEFAULT_ZOOM = 13;
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private boolean mLocationPermissionGranted;
 
@@ -128,10 +130,6 @@ public class MainActivity extends AppCompatActivity
     // Animations
     private static int MARKER_WIDTH, MARKER_HEIGHT;
 
-    // Network & JSON Variables
-    private String sessionCookie;
-    private String userId;
-
     // MediaPlayer & VideoView
     boolean isPLAYING = false;
     MediaPlayer mp;
@@ -151,7 +149,8 @@ public class MainActivity extends AppCompatActivity
 
     // Taking Photos and shooting Videos
     private Uri mImageUri;
-
+    private Drop newDrop;
+    private HashMap<String, Marker> markerMap = new HashMap<>();
 
 
     @Override
@@ -204,6 +203,7 @@ public class MainActivity extends AppCompatActivity
         fab_close = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fab_close);
         rotate_forward = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.rotate_forward);
         rotate_backward = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.rotate_backward);
+
     }
 
 
@@ -265,8 +265,7 @@ public class MainActivity extends AppCompatActivity
      * @param ext file extension
      * @return created file
      */
-    private File createTemporaryFile(String part, String ext) throws Exception
-    {
+    private File createTemporaryFile(String part, String ext) throws Exception {
         File tempDir = new File(getExternalCacheDir(), "photoCache");
         if(!tempDir.exists())
         {
@@ -275,16 +274,6 @@ public class MainActivity extends AppCompatActivity
         return File.createTempFile(part, ext, tempDir);
 
     }
-
-
-
-    private static int exifToDegrees(int exifOrientation) {
-        if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_90) { return 90; }
-        else if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_180) {  return 180; }
-        else if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_270) {  return 270; }
-        return 0;
-    }
-
 
     public void openVideoCamera(View view) {
         Intent videoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
@@ -298,13 +287,31 @@ public class MainActivity extends AppCompatActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == PHOTO_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
 
+
+            // Build Drop
+            newDrop = new Drop();
+            newDrop.setAuthor(USERNAME);
+            newDrop.setAuthorImgUrl(USERIMG);
+            newDrop.setDropType("Image");
+            newDrop.setComment("yeahBoi");
+            newDrop.setLatitude(mLastKnownLocation.getLatitude());
+            newDrop.setLongitude(mLastKnownLocation.getLongitude());
+            newDrop.setHideable(false);
+
+            Bitmap bm = BitmapFactory.decodeFile(mImageUri.getPath());
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bm.compress(Bitmap.CompressFormat.JPEG, 100, baos); //bm is the bitmap object
+            String encodedImage = Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT);
+
+            newDrop.setFileData(encodedImage);
+
             // FAB animation & Onclick stuff
             animateFAB(fab);
             fab.setImageResource(R.drawable.send);
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    animateFAB(v);
+                    sendImg(v);
                 }
             });
 
@@ -315,23 +322,173 @@ public class MainActivity extends AppCompatActivity
                     .into(fullscreenImg);
             fullscreenImgContainer.setVisibility(View.VISIBLE);
         }
+
+        if (requestCode == VIDEO_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+
+
+            // FAB animation & Onclick stuff
+            animateFAB(fab);
+            fab.setImageResource(R.drawable.send);
+        }
     }
 
     private void sendImg(View view) {
-        // get imgdata
-        // put in formdata request
-        // start Progressdialog
-        // close fullscreenImgContainer
+        try {
+            final ProgressDialog progress = new ProgressDialog(this);
+            progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
+            progress.setTitle("Uploading your Image!");
+            progress.setMessage("Please Wait...");
+            progress.show();
 
-        //POST AUF /BUDDY/DROPS
+            Gson gson = new Gson();
+            String dropJson = gson.toJson(newDrop);
+
+            JSONObject payload = new JSONObject(dropJson);
+
+            String path = "/buddy/drops";
+
+            RestClient.getInstance().post(payload, path, new MyListener<JSONObject>() {
+                @Override
+                public void getResult(JSONObject response) {
+                    if (response != null) {
+                        hideImg(fullscreenImgContainer);
+                        getDropsFromServer();
+                        progress.dismiss();
+                    } else {
+                        progress.dismiss();
+                        Toast.makeText(context, "Error while uploading your image",
+                                Toast.LENGTH_SHORT).show();
+                        hideImg(fullscreenImgContainer);
+                    }
+                }
+            });
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void activateLocation() {
+        JSONObject payload = new JSONObject();
+
+        try {
+            payload.put("name", USERNAME);
+            payload.put("imgUrl", USERICON);
+            payload.put("longitude", mLastKnownLocation.getLongitude());
+            payload.put("latitude", mLastKnownLocation.getLatitude());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        String path = "/buddy/people";
+
+
+        RestClient.getInstance().postNoFormData(payload, path, new MyListener<JSONObject>() {
+            @Override
+            public void getResult(JSONObject response) {
+                if (response != null) {
+                    // get ID
+                    Gson gson = new Gson();
+                    JsonObject jsonObject = gson.fromJson(String.valueOf(response), JsonObject.class);
+                    String locationId = jsonObject.get("id").getAsString();
+
+                    SharedPreferences sharedPref = MainActivity.this.getPreferences(Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPref.edit();
+                    editor.putString("LOCATION_ID", locationId);
+                    editor.apply();
+
+                } else {
+                    Toast.makeText(context, "Error while sending your location",
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    private void sendLocation(String locationId, Location location) {
+        JSONObject payload = new JSONObject();
+        try {
+            payload.put("longitude", location.getLongitude());
+            payload.put("latitude", location.getLatitude());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        String path = "/buddy/people/"+locationId;
+
+
+        RestClient.getInstance().put(payload, path, new MyListener<JSONObject>() {
+            @Override
+            public void getResult(JSONObject response) {
+                if (response != null) {
+                    System.out.println("sending Location has been successful");
+                } else {
+                    activateLocation();
+                }
+            }
+        });
+    }
+
+    private void getLocations() {
+        String path = "/buddy/people/";
+
+        RestClient.getInstance().get(path, new MyListener<String>() {
+            @Override
+            public void getResult(String response) {
+                if (response != null) {
+
+                    Gson gson = new Gson();
+                        Person[] people = gson.fromJson(response, Person[].class);
+
+                    for (Person p:people) {
+                        if (p.getName() != null) {
+                            Log.d("ACTIVE_PEOPLE", p.getName());
+                        }
+                    }
+
+                    // Set markers for parties
+                    setPeopleLocations(people);
+                }
+            }
+        });
+
+    }
+
+
+    /**
+     * set markers for parties
+     */
+    private void setPeopleLocations(Person[] people) {
+        for (Person p:people) {
+
+            LatLng dropLocation = new LatLng(p.getLatitude(), p.getLongitude());
+
+            final SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+            String locId = sharedPref.getString("LOCATION_ID", null);
+
+            if (!p.getId().equals(locId)) {
+                if (markerMap.get(p.getId()) != null) {
+                    markerMap.get(p.getId()).remove();
+                    Marker marker = mMap.addMarker(new MarkerOptions()
+                            .position(dropLocation)
+                            .title(p.getName()));
+                    markerMap.put(p.getId(), marker);
+                } else {
+                    Marker marker = mMap.addMarker(new MarkerOptions()
+                            .position(dropLocation)
+                            .title(p.getName()));
+                    marker.setTag(p);
+
+                    markerMap.put(p.getId(), marker);
+                }
+            }
+        }
     }
 
 
 
-    /**
-     * Hide Navbar and Statusbar for Fullscreen Map
-     * @param hasFocus
-     */
+        /**
+         * Hide Navbar and Statusbar for Fullscreen Map
+         * @param hasFocus
+         */
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
@@ -400,24 +557,37 @@ public class MainActivity extends AppCompatActivity
         });
 
 
-        // Get parties from JSON
-        try {
-            //get parties from local json
-            String partyJson = loadJSON(R.raw.drops_overview);
-            Drop[] drops = getDrops(partyJson);
-
-            // Set markers for parties
-            setDropLocations(drops);
-
-            //login();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
         // Turn on the My Location layer and the related control on the map.
         updateLocationUI();
         // Get the current location of the device and set the position of the map.
         updateDeviceLocation();
+
+
+        // Get parties from JSON
+        try {
+            //get parties from local json
+            //String partyJson = loadJSON(R.raw.drops_overview);
+            //Drop[] drops = getDrops(partyJson);
+
+
+            // refreshDrops every x Seconds
+            final Handler h = new Handler();
+            final int delay = 5000; //5 seconds
+
+            h.postDelayed(new Runnable(){
+                public void run(){
+                    getDropsFromServer();
+                    getLocations();
+                    h.postDelayed(this, delay);
+                }
+            }, delay);
+
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     /**
@@ -433,18 +603,6 @@ public class MainActivity extends AppCompatActivity
             Log.d("ACTIVE_DROPS", d.getComment());
         }
         return drops;
-    }
-
-    /**
-     * Gets specific drop from input Json
-     * @param json drop object as json string
-     * @return returns the drop Object
-     */
-    private Drop getDrop(String json) {
-        Gson gson = new Gson();
-        Drop drop = gson.fromJson(json, Drop.class);
-
-        return drop;
     }
 
 
@@ -539,6 +697,11 @@ public class MainActivity extends AppCompatActivity
         if (mLocationPermissionGranted) {
             mLastKnownLocation = LocationServices.FusedLocationApi
                     .getLastLocation(mGoogleApiClient);
+            LocationRequest mLocationRequest = LocationRequest.create();
+            mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+            mLocationRequest.setInterval(5000);
+            LocationServices.FusedLocationApi.requestLocationUpdates(
+                    mGoogleApiClient, mLocationRequest, this);
         }
 
         // Set the map's camera position to the current location of the device.
@@ -633,20 +796,21 @@ public class MainActivity extends AppCompatActivity
         mMap.animateCamera(markerLocation);
 
 
-        // Apply binding to bottom sheet
-        Drop drop = (Drop) marker.getTag();
+        if (marker.getTag() instanceof Drop) {
+            // Apply binding to bottom sheet
+            Drop drop = (Drop) marker.getTag();
 
-        // Update marker image
-        int iconResource = setMarkerImg(drop, true);
-        marker.setIcon(BitmapDescriptorFactory
-                .fromBitmap(resizeMapIcons(iconResource,
-                        MARKER_WIDTH,
-                        MARKER_HEIGHT)));
+            // Update marker image
+            int iconResource = setMarkerImg(drop, true);
+            marker.setIcon(BitmapDescriptorFactory
+                    .fromBitmap(resizeMapIcons(iconResource,
+                            MARKER_WIDTH,
+                            MARKER_HEIGHT)));
 
-        binding.setDrop(drop);
 
-        marker.showInfoWindow();
+            marker.showInfoWindow();
 
+        }
 
         //getDropDetails(drop.get_id());
         return true;
@@ -710,17 +874,10 @@ public class MainActivity extends AppCompatActivity
         fullscreenImgContainer.setVisibility(View.VISIBLE);
     }
 
-
-
     private void playVideo(Drop d) {
         fullscreenVideoContainer.setVisibility(View.VISIBLE);
 
         videoView = (VideoView) findViewById(R.id.video_view);
-        //Use a media controller so that you can scroll the video contents
-        //and also to pause, start the video.
-        //MediaController mediaController = new MediaController(this);
-        //mediaController.setAnchorView(videoView);
-        //videoView.setMediaController(mediaController);
         videoView.setVideoURI(Uri.parse(d.getContentUrl()));
         videoView.start();
     }
@@ -736,6 +893,12 @@ public class MainActivity extends AppCompatActivity
         // Hide when camera image is unsifficient
         if (!isFabOpen) {
             fab.setImageResource(R.drawable.plus);
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    animateFAB(v);
+                }
+            });
         }
     }
 
@@ -748,36 +911,13 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    /**
-     * Login on server and invoke getPartiesFromServer() on successful Login
-     * @throws JSONException error while building the payload
-     */
-    /*
-    public void sendData() throws JSONException {
-        JSONObject payload = new JSONObject();
-
-        // TODO: Delete hardcoded userdata and use the ones from the user
-        payload.put("username", "michael@schlechtinger.de");
-        payload.put("password", "ayylmao");
-
-        String path = "/auth/login";
-
-
-        @Multipart
-        @POST("drops")
-        Call<Response> updateUser(@Part MultipartBody.Part photo,
-                @Part("string") RequestBody string);
-
-
-    }*/
-
 
     private void getDropsFromServer() {
-        RestClient.getInstance().get(userId, sessionCookie, "/drops", new MyListener<String>() {
+
+        RestClient.getInstance().get("/buddy/drops", new MyListener<String>() {
             @Override
             public void getResult(String response) {
                 if (response != null) {
-                    // If there are no parties on the server, create new ones through post
                     Drop[] drops = getDrops(response);
 
                     // Set markers for parties
@@ -785,26 +925,7 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         });
-    }
 
-
-    private void getDropDetails(String partyId) {
-        String path = "/drops/" + partyId;
-        RestClient.getInstance().get(userId, sessionCookie, path, new MyListener<String>() {
-            @Override
-            public void getResult(String response) {
-                if (response != null) {
-
-                    Drop drop = getDrop(response);
-                    Log.d("TESTTEST", response);
-                    binding.setDrop(drop);
-
-                    // fill drop object with acquired information
-                    // parse json in jsonobject
-                    // drop == responseparty
-                }
-            }
-        });
     }
 
 
@@ -845,8 +966,8 @@ public class MainActivity extends AppCompatActivity
             if (!drop.isHideable()) {
                 switch (drop.getDropType()) {
                     case "Sound": loadPreviewImgLocal(preview, R.drawable.sound_preview); break;
-                    case "Video": loadPreviewImg(marker, preview, drop.getPreviewImg(), drop); break;
-                    case "Image": loadPreviewImg(marker, preview, drop.getPreviewImg(), drop); break;
+                    case "Video": loadPreviewImg(marker, preview, drop.getThumbNailUrl(), drop); break;
+                    case "Image": loadPreviewImg(marker, preview, drop.getThumbNailUrl(), drop); break;
                     default: break;
                 }
             } else {
@@ -902,4 +1023,13 @@ public class MainActivity extends AppCompatActivity
         public void onError() {}
     }
 
+    @Override
+    public void onLocationChanged(Location location) {
+        final SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+        String locId = sharedPref.getString("LOCATION_ID", null);
+        if (locId == null) {
+            activateLocation();
+        }
+        sendLocation(locId, location);
+    }
 }

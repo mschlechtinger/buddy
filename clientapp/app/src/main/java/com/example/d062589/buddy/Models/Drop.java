@@ -7,6 +7,8 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.example.d062589.buddy.R;
 
+import java.io.File;
+
 /**
  * Created by D062589 on 10.03.2017.
  */
@@ -14,13 +16,14 @@ import com.example.d062589.buddy.R;
 public class Drop extends BaseObservable {
     private String id;
     private String comment;
-    private String previewImg;
+    private String thumbNailUrl;
     private String author;
     private String authorImgUrl;
     private double latitude;
     private double longitude;
     private String dropType;
     private String contentUrl;
+    private String fileData;
     private boolean infoWindowOpened = false;
     private boolean hideable;
 
@@ -37,12 +40,12 @@ public class Drop extends BaseObservable {
         return id;
     }
 
-    public void setPreviewImg(String previewImg) {
-        this.previewImg = previewImg;
+    public void setThumbNailUrl(String thumbNailUrl) {
+        this.thumbNailUrl = thumbNailUrl;
     }
 
-    public String getPreviewImg() {
-        return previewImg;
+    public String getThumbNailUrl() {
+        return thumbNailUrl;
     }
 
     // Binding for ImageViews
@@ -114,6 +117,18 @@ public class Drop extends BaseObservable {
 
     public void setLongitude(double longitude) {
         this.longitude = longitude;
+    }
+
+    public void setAuthorImgUrl(String authorImgUrl) {
+        this.authorImgUrl = authorImgUrl;
+    }
+
+    public String getFileData() {
+        return fileData;
+    }
+
+    public void setFileData(String fileData) {
+        this.fileData = fileData;
     }
 }
 

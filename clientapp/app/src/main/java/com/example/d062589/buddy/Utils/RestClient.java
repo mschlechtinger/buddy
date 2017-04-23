@@ -124,9 +124,42 @@ public class RestClient {
     }
 
 
+    // Put
+    public void put(JSONObject entity, String path, final MyListener<JSONObject> listener) {
+        String absoluteUrl = PREFIX_URL + path;
+
+        MetaRequest request = new MetaRequest(Request.Method.PUT, absoluteUrl, entity, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    Log.d(TAG + ": ", "PostRequest Response : " + response.toString());
+                    if (null != response.toString())
+                        listener.getResult(response);
+                }
+            },
+                new Response.ErrorListener()
+                {
+                    @Override
+                    public void onErrorResponse(VolleyError error)
+                    {
+                        if (null != error.networkResponse)
+                        {
+                            Log.d(TAG + ": ", "Error Response: " + error.networkResponse);
+                            listener.getResult(null);
+                        }
+                    }
+                })  {
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        Map<String, String> params = new HashMap<>();
+                        params.put("Content-Type", "application/json");
+                        return params;
+                    }
+                };
+        requestQueue.add(request);
+    }
+
     // Post Formdata
-    public void post(JSONObject entity, String path, final MyListener<JSONObject> listener)
-    {
+    public void post(JSONObject entity, String path, final MyListener<JSONObject> listener) {
         String absoluteUrl = PREFIX_URL + path;
 
         MetaRequest request = new MetaRequest(Request.Method.POST, absoluteUrl, entity, new Response.Listener<JSONObject>() {
@@ -152,14 +185,46 @@ public class RestClient {
                     @Override
                     public Map<String, String> getHeaders() throws AuthFailureError {
                         Map<String, String> params = new HashMap<>();
-                        params.put("Content-Type", "multipart/form-data");
+                        params.put("Content-Type", "application/json");
                         return params;
                     }
                 };
         requestQueue.add(request);
     }
 
+    // Post Formdata
+    public void postNoFormData(JSONObject entity, String path, final MyListener<JSONObject> listener) {
+        String absoluteUrl = PREFIX_URL + path;
 
+        MetaRequest request = new MetaRequest(Request.Method.POST, absoluteUrl, entity, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    Log.d(TAG + ": ", "PostRequest Response : " + response.toString());
+                    if (null != response.toString())
+                        listener.getResult(response);
+                }
+            },
+                new Response.ErrorListener()
+                {
+                    @Override
+                    public void onErrorResponse(VolleyError error)
+                    {
+                        if (null != error.networkResponse)
+                        {
+                            Log.d(TAG + ": ", "Error Response: " + error.networkResponse);
+                            listener.getResult(null);
+                        }
+                    }
+                })  {
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        Map<String, String> params = new HashMap<>();
+                        params.put("Content-Type", "application/json");
+                        return params;
+                    }
+                };
+        requestQueue.add(request);
+    }
 
 
 
@@ -197,6 +262,39 @@ public class RestClient {
                 };
         requestQueue.add(request);
     }
+
+    public void get(String path, final MyListener<String> listener)
+        {
+            String absoluteUrl = PREFIX_URL + path;
+
+            final StringRequest request = new StringRequest(Request.Method.GET, absoluteUrl, new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d(TAG + ": ", "PostRequest Response : " + response);
+                        if (null != response)
+                            listener.getResult(response);
+                    }
+                },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error)
+                        {
+                            if (null != error.networkResponse)
+                            {
+                                Log.d(TAG + ": ", "Error Response code: " + error.networkResponse.statusCode);
+                                listener.getResult(null);
+                            }
+                        }
+                    }) {
+                        @Override
+                        public Map<String, String> getHeaders() throws AuthFailureError {
+                            Map<String, String> params = new HashMap<>();
+                            return params;
+                        }
+                    };
+            requestQueue.add(request);
+        }
+
 
 
 }
