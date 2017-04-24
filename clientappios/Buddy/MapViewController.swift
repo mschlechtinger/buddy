@@ -24,7 +24,7 @@ class MapViewController: UIViewController, MGLMapViewDelegate, UIGestureRecogniz
     
     override func viewDidLoad() {
         super.viewDidLoad()
-  
+        
         // For use in foreground
         self.locationManager.requestWhenInUseAuthorization()
         
@@ -62,13 +62,16 @@ class MapViewController: UIViewController, MGLMapViewDelegate, UIGestureRecogniz
     func fetchAndDisplay() {
         Api.fetchDrops { (drops) in
             print("GOT \(drops.count) drops")
-            if let annotationsOnMap = self.mapView.annotations {
-                self.mapView.removeAnnotations(annotationsOnMap)
-            }
-            for drop in drops {
-                let location = CLLocationCoordinate2DMake(drop.latitude, drop.longitude)
-                let annotation = DropPointAnnotation(coordinate: location, title: drop.comment, subtitle: nil, drop: drop)
-                self.mapView.addAnnotation(annotation)
+            DispatchQueue.main.async {
+                
+                if let annotationsOnMap = self.mapView.annotations {
+                    self.mapView.removeAnnotations(annotationsOnMap)
+                }
+                for drop in drops {
+                    let location = CLLocationCoordinate2DMake(drop.latitude, drop.longitude)
+                    let annotation = DropPointAnnotation(coordinate: location, title: drop.comment, subtitle: nil, drop: drop)
+                    self.mapView.addAnnotation(annotation)
+                }
             }
         }
     }
@@ -191,7 +194,7 @@ class MapViewController: UIViewController, MGLMapViewDelegate, UIGestureRecogniz
         if lastLoc == nil {
             if let loc = manager.location?.coordinate {
                 mapView.setCenter(loc, animated: true)
-
+                
             }
         }
         lastLoc = manager.location?.coordinate ?? nil
@@ -254,7 +257,7 @@ extension UIImagePickerController {
         self.navigationBar.titleTextAttributes = [
             NSForegroundColorAttributeName : UIColor.white
         ]
-
+        
     }
 }
 
